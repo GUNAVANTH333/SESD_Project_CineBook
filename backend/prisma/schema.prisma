@@ -1,0 +1,238 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum ShowStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum SeatType {
+  STANDARD
+  PREMIUM
+  RECLINER
+}
+
+enum ShowSeatStatus {
+  AVAILABLE
+  LOCKED
+  BOOKED
+}
+
+enum BookingStatus {
+  CREATED
+  PENDING_PAYMENT
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  INITIATED
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  phone        String?
+  role         UserRole @default(CUSTOMER)
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  bookings     Booking[]
+
+  @@map("users")
+}
+
+model Multiplex {
+  id           String   @id @default(uuid())
+  name         String
+  location     String
+  city         String
+  totalScreens Int      @map("total_screens")
+
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  screens      Screen[]
+
+  @@map("multiplexes")
+}
+
+model Screen {
+  id            String   @id @default(uuid())
+  multiplexId   String   @map("multiplex_id")
+  screenNumber  Int      @map("screen_number")
+  totalRows     Int      @map("total_rows")
+  totalColumns  Int      @map("total_columns")
+  capacity      Int
+
+  multiplex     Multiplex @relation(fields: [multiplexId], references: [id])
+
+  seats         Seat[]
+  shows         Show[]
+
+  @@map("screens")
+}
+
+model Movie {
+  id              String   @id @default(uuid())
+  title           String
+  genre           String
+  durationMinutes Int      @map("duration_minutes")
+  language        String
+  rating          String
+  posterUrl       String   @map("poster_url")
+  releaseDate     DateTime @map("release_date")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  shows           Show[]
+
+  @@map("movies")
+}
+
+model Show {
+  id         String     @id @default(uuid())
+  movieId    String     @map("movie_id")
+  screenId   String     @map("screen_id")
+
+  showTime   DateTime   @map("show_time")
+  endTime    DateTime   @map("end_time")
+  basePrice  Float      @map("base_price")
+
+  status     ShowStatus @default(SCHEDULED)
+
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  movie      Movie      @relation(fields: [movieId], references: [id])
+  screen     Screen     @relation(fields: [screenId], references: [id])
+
+  showSeats  ShowSeat[]
+  bookings   Booking[]
+
+  @@map("shows")
+}
+
+model Seat {
+  id              String   @id @default(uuid())
+  screenId        String   @map("screen_id")
+
+  rowLabel        String   @map("row_label")
+  seatNumber      Int      @map("seat_number")
+
+  seatType        SeatType @map("seat_type")
+  priceMultiplier Float    @map("price_multiplier")
+
+  screen          Screen   @relation(fields: [screenId], references: [id])
+  showSeats       ShowSeat[]
+
+  @@map("seats")
+}
+
+model ShowSeat {
+  id                 String          @id @default(uuid())
+  showId             String          @map("show_id")
+  seatId             String          @map("seat_id")
+
+  status             ShowSeatStatus  @default(AVAILABLE)
+
+  lockedByBookingId  String?         @map("locked_by_booking_id")
+  lockExpiresAt      DateTime?       @map("lock_expires_at")
+
+  version            Int             @default(0)
+
+  show               Show            @relation(fields: [showId], references: [id])
+  seat               Seat            @relation(fields: [seatId], references: [id])
+
+  bookingSeats       BookingSeat[]
+
+  @@unique([showId, seatId])
+  @@map("show_seats")
+}
+
+model Booking {
+  id           String         @id @default(uuid())
+  userId       String         @map("user_id")
+  showId       String         @map("show_id")
+
+  totalAmount  Float          @map("total_amount")
+  seatCount    Int            @map("seat_count")
+
+  status       BookingStatus  @default(CREATED)
+
+  createdAt    DateTime       @default(now()) @map("created_at")
+  expiresAt    DateTime?      @map("expires_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  version      Int            @default(0)
+
+  user         User           @relation(fields: [userId], references: [id])
+  show         Show           @relation(fields: [showId], references: [id])
+
+  bookingSeats BookingSeat[]
+  payment      Payment?
+  logs         BookingLog[]
+
+  @@map("bookings")
+}
+
+model BookingSeat {
+  id            String   @id @default(uuid())
+  bookingId     String   @map("booking_id")
+  showSeatId    String   @map("show_seat_id")
+
+  price         Float
+
+  booking       Booking  @relation(fields: [bookingId], references: [id])
+  showSeat      ShowSeat @relation(fields: [showSeatId], references: [id])
+
+  @@map("booking_seats")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  bookingId       String        @unique @map("booking_id")
+
+  amount          Float
+  status          PaymentStatus
+
+  transactionId   String        @unique @map("transaction_id")
+  paymentMethod   String        @map("payment_method")
+
+  paidAt          DateTime?     @map("paid_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  booking         Booking       @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+model BookingLog {
+  id             String   @id @default(uuid())
+  bookingId      String   @map("booking_id")
+
+  previousStatus String   @map("previous_status")
+  newStatus      String   @map("new_status")
+
+  changedBy      String   @map("changed_by")
+  timestamp      DateTime @default(now())
+
+  booking        Booking  @relation(fields: [bookingId], references: [id])
+
+  @@map("booking_logs")
+}
