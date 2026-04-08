@@ -1,11 +1,37 @@
 import express from "express";
+import cors from "cors";
+import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
+import { env } from "./config/env.js";
 
 const app = express();
 
-app.use(express.json());
+// ------ Global Middleware ------
 
-app.get("/", (req, res) => {
-    res.send("Welcome to CineBook API!");
-    });
+app.use(cors({
+  origin: env.NODE_ENV === "production" ? false : "*",
+  credentials: true,
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ------ Health Check ------
+
+app.get("/", (_req, res) => {
+  res.json({ success: true, message: "Welcome to CineBook API 🎬" });
+});
+
+// ------ Domain Routes (mounted in future phases) ------
+// app.use("/api/auth", authRoutes);
+// app.use("/api/movies", movieRoutes);
+// app.use("/api/shows", showRoutes);
+// app.use("/api/multiplexes", multiplexRoutes);
+// app.use("/api/bookings", bookingRoutes);
+// app.use("/api/payments", paymentRoutes);
+
+// ------ 404 + Error Handling (must be last) ------
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
