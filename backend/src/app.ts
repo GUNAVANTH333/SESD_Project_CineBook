@@ -3,6 +3,13 @@ import cors from "cors";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 import { env } from "./config/env.js";
 
+import authRoutes from "./routes/auth.routes.js";
+import movieRoutes from "./routes/movie.routes.js";
+import multiplexRoutes from "./routes/multiplex.routes.js";
+import showRoutes from "./routes/show.routes.js";
+import bookingRoutes from "./routes/booking.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+
 const app = express();
 
 // ------ Global Middleware ------
@@ -21,13 +28,14 @@ app.get("/", (_req, res) => {
   res.json({ success: true, message: "Welcome to CineBook API 🎬" });
 });
 
-// ------ Domain Routes (mounted in future phases) ------
-// app.use("/api/auth", authRoutes);
-// app.use("/api/movies", movieRoutes);
-// app.use("/api/shows", showRoutes);
-// app.use("/api/multiplexes", multiplexRoutes);
-// app.use("/api/bookings", bookingRoutes);
-// app.use("/api/payments", paymentRoutes);
+// ------ Domain Routes ------
+
+app.use("/api/auth", authRoutes);
+app.use("/api/movies", movieRoutes);
+app.use("/api/multiplexes", multiplexRoutes);
+app.use("/api/shows", showRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // ------ 404 + Error Handling (must be last) ------
 
