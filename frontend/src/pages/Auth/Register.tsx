@@ -8,7 +8,7 @@ const Register: React.FC = () => {
   const { register } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '', adminKey: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -17,7 +17,7 @@ const Register: React.FC = () => {
     setError('')
     setLoading(true)
     try {
-      await register(form.name, form.email, form.password, form.phone || undefined)
+      await register(form.name, form.email, form.password, form.phone || undefined, form.adminKey || undefined)
       showToast('Account created! Welcome to CineBook 🎬', 'success')
       navigate('/')
     } catch (err: any) {
@@ -57,6 +57,11 @@ const Register: React.FC = () => {
             <label className="form-label">Phone <span style={{ color: 'var(--text-muted)' }}>(optional)</span></label>
             <input className="form-input" type="tel" placeholder="+91 98765 43210"
               value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Admin Key <span style={{ color: 'var(--text-muted)' }}>(optional)</span></label>
+            <input className="form-input" type="password" placeholder="Leave blank for regular account"
+              value={form.adminKey} onChange={e => setForm(p => ({ ...p, adminKey: e.target.value }))} autoComplete="off" />
           </div>
 
           {error && <div className="error-msg">⚠ {error}</div>}

@@ -3,7 +3,7 @@ import type { Movie, Multiplex, Show, SeatMapEntry, Booking, ApiResponse } from 
 
 // ---- Auth ----
 export const authApi = {
-  register: (data: { name: string; email: string; password: string; phone?: string }) =>
+  register: (data: { name: string; email: string; password: string; phone?: string; adminKey?: string }) =>
     api.post<ApiResponse<{ user: any; tokens: { accessToken: string; refreshToken: string } }>>('/auth/register', data),
 
   login: (data: { email: string; password: string }) =>

@@ -3,6 +3,7 @@ import { hashPassword, comparePassword } from "../utils/hash.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/token.js";
 import { ConflictError, UnauthorizedError, NotFoundError } from "../utils/AppError.js";
 import { User } from "../generated/prisma/client.js";
+import { env } from "../config/env.js";
 
 interface AuthTokens {
   accessToken: string;
@@ -14,6 +15,7 @@ interface RegisterDto {
   email: string;
   password: string;
   phone?: string;
+  adminKey?: string;
 }
 
 interface LoginDto {
@@ -31,11 +33,14 @@ export class AuthService {
     }
 
     const passwordHash = await hashPassword(dto.password);
+    const role = dto.adminKey === env.ADMIN_REGISTRATION_KEY ? "ADMIN" : "CUSTOMER";
+
     const user = await userRepository.create({
       name: dto.name,
       email: dto.email,
       passwordHash,
       phone: dto.phone,
+      role,
     });
 
     const tokens = this.issueTokens(user);

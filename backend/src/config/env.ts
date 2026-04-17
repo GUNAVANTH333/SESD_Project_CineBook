@@ -22,4 +22,7 @@ export const env = {
   JWT_REFRESH_EXPIRES_IN: getEnvVar("JWT_REFRESH_EXPIRES_IN", "7d"),
 
   SEAT_LOCK_TTL_MINUTES: parseInt(getEnvVar("SEAT_LOCK_TTL_MINUTES", "10"), 10),
+
+  // Registering with this key grants ADMIN role
+  ADMIN_REGISTRATION_KEY: getEnvVar("ADMIN_REGISTRATION_KEY", "cinebook-admin-2024"),
 };

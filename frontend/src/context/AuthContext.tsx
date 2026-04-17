@@ -7,7 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (name: string, email: string, password: string, phone?: string) => Promise<void>
+  register: (name: string, email: string, password: string, phone?: string, adminKey?: string) => Promise<void>
   logout: () => void
 }
 
@@ -35,8 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(user)
   }, [])
 
-  const register = useCallback(async (name: string, email: string, password: string, phone?: string) => {
-    const { data: res } = await authApi.register({ name, email, password, phone })
+  const register = useCallback(async (name: string, email: string, password: string, phone?: string, adminKey?: string) => {
+    const { data: res } = await authApi.register({ name, email, password, phone, adminKey })
     const { user, tokens } = res.data
     localStorage.setItem('accessToken', tokens.accessToken)
     localStorage.setItem('refreshToken', tokens.refreshToken)

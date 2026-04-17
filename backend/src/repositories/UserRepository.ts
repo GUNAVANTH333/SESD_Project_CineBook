@@ -15,6 +15,7 @@ export class UserRepository {
     email: string;
     passwordHash: string;
     phone?: string;
+    role?: 'ADMIN' | 'CUSTOMER';
   }): Promise<User> {
     return prisma.user.create({ data });
   }
