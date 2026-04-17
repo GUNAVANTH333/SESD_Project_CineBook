@@ -1,0 +1,195 @@
+.booking-detail-page { padding: 40px 0 80px; }
+
+.booking-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Ticket card */
+.ticket-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ticket-status { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; }
+.ticket-id { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 0.08em; }
+
+.ticket-movie {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  padding: 24px 24px 16px;
+  text-transform: uppercase;
+}
+
+.ticket-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0 24px;
+}
+
+.ticket-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.ticket-meta-item:nth-last-child(-n+2) { border-bottom: none; }
+
+.ticket-meta-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Dashed divider (ticket perforation) */
+.ticket-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.ticket-cutout {
+  width: 20px; height: 20px;
+  background: var(--bg-base);
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.ticket-cutout.left { margin-left: -10px; border-left: none; }
+.ticket-cutout.right { margin-right: -10px; border-right: none; }
+
+.ticket-dashes {
+  flex: 1;
+  border-top: 2px dashed var(--border);
+  margin: 0 8px;
+}
+
+.ticket-seats { padding: 20px 24px; }
+
+.seat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+.seat-chip {
+  background: var(--accent-muted);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.ticket-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.ticket-amount { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+
+.payment-status-badge {
+  background: rgba(82,183,136,0.15);
+  border: 1px solid #2d6a4f;
+  color: #52b788;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* Right panel */
+.booking-actions-panel {
+  position: sticky;
+  top: 84px;
+}
+
+.panel-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+.panel-sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+
+.payment-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+}
+
+.payment-methods { display: flex; flex-direction: column; gap: 10px; }
+
+.payment-method-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.payment-method-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.payment-method-btn.selected { background: var(--accent-muted); border-color: var(--accent); color: var(--text-primary); }
+
+.cancel-btn { width: 100%; margin-top: 10px; color: var(--accent) !important; }
+
+/* Status panels */
+.status-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.status-icon {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin: 0 auto 16px;
+  background: rgba(82,183,136,0.15);
+  color: #52b788;
+}
+
+.status-icon.cancelled { background: rgba(230,57,70,0.12); color: var(--accent); }
+
+.status-confirmed h3, .status-cancelled h3 { font-size: 1.1rem; margin-bottom: 8px; }
+.status-confirmed p, .status-cancelled p { color: var(--text-muted); font-size: 0.875rem; }
+
+.payment-receipt { margin-top: 20px; text-align: left; }
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.receipt-val { color: var(--text-primary); font-weight: 500; }
+
+@media (max-width: 768px) {
+  .booking-detail-grid { grid-template-columns: 1fr; }
+}

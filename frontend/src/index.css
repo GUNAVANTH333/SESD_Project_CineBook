@@ -1,0 +1,189 @@
+/* =========================================================
+   CineBook — Global Design System
+   Font: DM Sans (body) + Bebas Neue (display)
+   Palette: Near-black background, warm off-white, rich red accent
+   ========================================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-base:       #0a0a0f;
+  --bg-surface:    #111118;
+  --bg-card:       #18181f;
+  --bg-hover:      #1f1f28;
+  --bg-input:      #14141a;
+
+  --accent:        #e63946;
+  --accent-hover:  #c1121f;
+  --accent-muted:  rgba(230, 57, 70, 0.12);
+
+  --text-primary:  #f4f1ee;
+  --text-secondary:#9d9ba5;
+  --text-muted:    #5e5c66;
+
+  --border:        rgba(255,255,255,0.07);
+  --border-focus:  rgba(230, 57, 70, 0.5);
+
+  --radius-sm:     6px;
+  --radius-md:     12px;
+  --radius-lg:     18px;
+  --radius-xl:     24px;
+
+  --shadow-card:   0 2px 20px rgba(0,0,0,0.4);
+  --shadow-glow:   0 0 30px rgba(230,57,70,0.15);
+
+  --font-display:  'Bebas Neue', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+
+  --transition:    0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Typography ---- */
+h1, h2, h3, h4 { line-height: 1.2; font-weight: 600; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { font-family: var(--font-body); cursor: pointer; border: none; }
+input, select, textarea { font-family: var(--font-body); }
+
+/* ---- Layout utilities ---- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 3px; }
+
+/* ---- Spinner ---- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 60px auto;
+}
+
+/* ---- Fade in ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease both; }
+
+/* ---- Btn base ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all var(--transition);
+  letter-spacing: 0.01em;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+/* ---- Form elements ---- */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+.form-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color var(--transition);
+  outline: none;
+  width: 100%;
+}
+.form-input:focus { border-color: var(--border-focus); }
+.form-input::placeholder { color: var(--text-muted); }
+
+/* ---- Tag/badge ---- */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-accent { background: var(--accent-muted); color: var(--accent); }
+.badge-neutral { background: var(--bg-hover); color: var(--text-secondary); }
+
+/* ---- Divider ---- */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 0;
+}
+
+/* ---- Error text ---- */
+.error-msg {
+  color: var(--accent);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---- Toast ---- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+.toast {
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-width: 260px;
+  animation: fadeUp 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast-success { background: #1a3a2a; border: 1px solid #2d6a4f; color: #52b788; }
+.toast-error   { background: #3a1a1a; border: 1px solid #6a2d2d; color: var(--accent); }
