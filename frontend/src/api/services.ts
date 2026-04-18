@@ -50,3 +50,8 @@ export const paymentsApi = {
   pay: (bookingId: string, data: { paymentMethod: string }) =>
     api.post<ApiResponse<any>>(`/payments/${bookingId}/pay`, data),
 }
+
+// ---- Admin Repair ----
+export const repairApi = {
+  repairSeatMaps: () => api.post<ApiResponse<{ screensFixed: number; showsFixed: number }>>('/shows/repair-seats'),
+}

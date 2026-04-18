@@ -4,6 +4,7 @@ import { multiplexRepository } from "../repositories/MultiplexRepository.js";
 import { seatRepository } from "../repositories/SeatRepository.js";
 import { Show } from "../generated/prisma/client.js";
 import { NotFoundError, ConflictError } from "../utils/AppError.js";
+import prisma from "../config/db.js";
 
 interface CreateShowDto {
   movieId: string;
@@ -59,6 +60,61 @@ export class ShowService {
     }
 
     return show;
+  }
+  async repairSeatMaps(): Promise<{ screensFixed: number; showsFixed: number }> {
+    let screensFixed = 0;
+    let showsFixed = 0;
+
+    // 1. Find all screens that have zero seats
+    const screens = await prisma.screen.findMany({
+      where: { seats: { none: {} } },
+    });
+
+    for (const screen of screens) {
+      const { totalRows, totalColumns } = screen;
+      const seats: Array<{
+        rowLabel: string;
+        seatNumber: number;
+        seatType: "STANDARD" | "PREMIUM" | "RECLINER";
+        priceMultiplier: number;
+      }> = [];
+
+      for (let r = 0; r < totalRows; r++) {
+        const rowLabel = String.fromCharCode(65 + r);
+        let seatType: "STANDARD" | "PREMIUM" | "RECLINER";
+        let priceMultiplier: number;
+
+        if (r >= totalRows - 2) {
+          seatType = "RECLINER"; priceMultiplier = 2.0;
+        } else if (r >= Math.floor(totalRows * 0.5) && r < totalRows - 2) {
+          seatType = "PREMIUM"; priceMultiplier = 1.5;
+        } else {
+          seatType = "STANDARD"; priceMultiplier = 1.0;
+        }
+
+        for (let c = 1; c <= totalColumns; c++) {
+          seats.push({ rowLabel, seatNumber: c, seatType, priceMultiplier });
+        }
+      }
+
+      await seatRepository.createSeatsForScreen(screen.id, seats);
+      screensFixed++;
+    }
+
+    // 2. Find all shows that have zero ShowSeat rows
+    const shows = await prisma.show.findMany({
+      where: { showSeats: { none: {} } },
+    });
+
+    for (const show of shows) {
+      const seats = await seatRepository.findByScreen(show.screenId);
+      if (seats.length > 0) {
+        await seatRepository.initShowSeats(show.id, seats.map((s) => s.id));
+        showsFixed++;
+      }
+    }
+
+    return { screensFixed, showsFixed };
   }
 }
 

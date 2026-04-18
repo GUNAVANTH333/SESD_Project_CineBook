@@ -1,4 +1,5 @@
 import { multiplexRepository } from "../repositories/MultiplexRepository.js";
+import { seatRepository } from "../repositories/SeatRepository.js";
 import { Multiplex, Screen } from "../generated/prisma/client.js";
 import { NotFoundError } from "../utils/AppError.js";
 
@@ -43,7 +44,44 @@ export class MultiplexService {
 
   async addScreen(multiplexId: string, dto: AddScreenDto): Promise<Screen> {
     await this.getById(multiplexId);
-    return multiplexRepository.addScreen({ multiplexId, ...dto });
+    const screen = await multiplexRepository.addScreen({ multiplexId, ...dto });
+
+    // Auto-generate Seat rows for this screen
+    const { totalRows, totalColumns } = dto;
+    const seats: Array<{
+      rowLabel: string;
+      seatNumber: number;
+      seatType: "STANDARD" | "PREMIUM" | "RECLINER";
+      priceMultiplier: number;
+    }> = [];
+
+    for (let r = 0; r < totalRows; r++) {
+      // A=0, B=1, … Z=25, AA=26 …
+      const rowLabel = String.fromCharCode(65 + r);
+
+      // Last 2 rows → Recliner, middle 30% → Premium, rest → Standard
+      let seatType: "STANDARD" | "PREMIUM" | "RECLINER";
+      let priceMultiplier: number;
+
+      if (r >= totalRows - 2) {
+        seatType = "RECLINER";
+        priceMultiplier = 2.0;
+      } else if (r >= Math.floor(totalRows * 0.5) && r < totalRows - 2) {
+        seatType = "PREMIUM";
+        priceMultiplier = 1.5;
+      } else {
+        seatType = "STANDARD";
+        priceMultiplier = 1.0;
+      }
+
+      for (let c = 1; c <= totalColumns; c++) {
+        seats.push({ rowLabel, seatNumber: c, seatType, priceMultiplier });
+      }
+    }
+
+    await seatRepository.createSeatsForScreen(screen.id, seats);
+
+    return screen;
   }
 }
 

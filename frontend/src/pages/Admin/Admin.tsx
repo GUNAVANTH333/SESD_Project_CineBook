@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { moviesApi, multiplexesApi, showsApi } from '../../api/services'
+import { moviesApi, multiplexesApi, showsApi, repairApi } from '../../api/services'
 import { useToast } from '../../context/ToastContext'
 import type { Movie, Multiplex } from '../../types'
 import './Admin.css'
@@ -252,6 +252,7 @@ const MultiplexesPanel: React.FC<{ multiplexes: Multiplex[]; onRefresh: () => vo
 const ShowsPanel: React.FC<{ movies: Movie[]; multiplexes: Multiplex[]; showToast: any }> = ({ movies, multiplexes, showToast }) => {
   const [form, setForm] = useState({ movieId: '', screenId: '', showTime: '', basePrice: 200 })
   const [saving, setSaving] = useState(false)
+  const [repairing, setRepairing] = useState(false)
 
   const screens = multiplexes.flatMap(m => m.screens.map(s => ({ ...s, multiplexName: m.name })))
 
@@ -267,10 +268,34 @@ const ShowsPanel: React.FC<{ movies: Movie[]; multiplexes: Multiplex[]; showToas
     } finally { setSaving(false) }
   }
 
+  const handleRepair = async () => {
+    setRepairing(true)
+    try {
+      const res = await repairApi.repairSeatMaps()
+      const { screensFixed, showsFixed } = res.data.data
+      showToast(`✅ Fixed ${screensFixed} screen(s) and ${showsFixed} show(s)`, 'success')
+    } catch (err: any) {
+      showToast(err.response?.data?.message || 'Repair failed', 'error')
+    } finally { setRepairing(false) }
+  }
+
   return (
     <div className="admin-panel" style={{ gridTemplateColumns: '1fr' }}>
       <div className="admin-panel-left" style={{ maxWidth: 480 }}>
-        <h3 className="panel-section-title">Schedule New Show</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+          <h3 className="panel-section-title" style={{ marginBottom: 0 }}>Schedule New Show</h3>
+          <button
+            className="btn btn-ghost"
+            style={{ fontSize: '0.8rem', padding: '6px 12px', color: 'var(--accent)', borderColor: 'var(--accent)' }}
+            onClick={handleRepair}
+            disabled={repairing}
+          >
+            {repairing ? '⏳ Repairing...' : '🔧 Repair Seat Maps'}
+          </button>
+        </div>
+        <p className="form-hint" style={{ marginBottom: 16, color: 'var(--accent)' }}>
+          ⚠ If shows show &quot;No seats available&quot;, click &quot;Repair Seat Maps&quot; once to fix all existing shows.
+        </p>
         <form className="admin-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Movie</label>
@@ -296,7 +321,7 @@ const ShowsPanel: React.FC<{ movies: Movie[]; multiplexes: Multiplex[]; showToas
             <input className="form-input" type="number" min={50} value={form.basePrice}
               onChange={e => setForm(p => ({ ...p, basePrice: Number(e.target.value) }))} required />
           </div>
-          <p className="form-hint">The seat map will be auto-generated from screen seats. Premium seats = 1.5x, Recliners = 2x base price.</p>
+          <p className="form-hint">The seat map will be auto-generated from screen seats. Premium = 1.5x, Recliners = 2x base price.</p>
           <button type="submit" className="btn btn-primary" disabled={saving || movies.length === 0 || screens.length === 0}
             style={{ width: '100%', marginTop: 8 }}>
             {saving ? 'Creating...' : 'Create Show'}

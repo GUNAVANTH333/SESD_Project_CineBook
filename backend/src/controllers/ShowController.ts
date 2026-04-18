@@ -40,6 +40,14 @@ export class ShowController {
       next(err);
     }
   }
+  async repairSeatMaps(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await showService.repairSeatMaps();
+      sendSuccess(res, result, `Repaired ${result.screensFixed} screen(s) and ${result.showsFixed} show(s)`);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const showController = new ShowController();
