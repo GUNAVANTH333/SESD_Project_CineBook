@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { showsApi, bookingsApi } from '../../api/services'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
+import { MapPin, Monitor, CalendarDays, Clock, Armchair } from 'lucide-react'
 import type { Show, SeatMapEntry } from '../../types'
 import './SeatSelection.css'
 
@@ -64,7 +65,6 @@ const SeatSelection: React.FC = () => {
     </div>
   )
 
-  // Group seats by row
   const rows = seatMap.reduce<Record<string, SeatMapEntry[]>>((acc, seat) => {
     if (!acc[seat.row]) acc[seat.row] = []
     acc[seat.row].push(seat)
@@ -76,30 +76,27 @@ const SeatSelection: React.FC = () => {
   return (
     <div className="seat-page">
       <div className="container">
-        {/* Show info bar */}
         <div className="show-info-bar fade-up">
           <Link to="/shows" className="back-link">← Back</Link>
           <div className="show-info-main">
             <h1 className="show-movie-title">{show.movie.title}</h1>
             <div className="show-info-meta">
-              <span>📍 {show.screen?.multiplex?.name}</span>
-              <span>🖥 Screen {show.screen?.screenNumber}</span>
-              <span>📅 {showDate.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-              <span>🕐 {showDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+              <span><MapPin size={13} /> {show.screen?.multiplex?.name}</span>
+              <span><Monitor size={13} /> Screen {show.screen?.screenNumber}</span>
+              <span><CalendarDays size={13} /> {showDate.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+              <span><Clock size={13} /> {showDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
             </div>
           </div>
         </div>
 
-        {/* Screen */}
         <div className="screen-label fade-up">
           <div className="screen-bar" />
           <span>SCREEN</span>
         </div>
 
-        {/* Seat map */}
         {seatMap.length === 0 ? (
           <div className="empty-state" style={{ marginTop: 40 }}>
-            <p>🪑</p>
+            <Armchair size={40} style={{ margin: '0 auto 12px', display: 'block', color: 'var(--text-muted)' }} />
             <p>No seats available for this show</p>
           </div>
         ) : (
@@ -125,7 +122,6 @@ const SeatSelection: React.FC = () => {
           </div>
         )}
 
-        {/* Legend */}
         <div className="seat-legend fade-up">
           <div className="legend-item"><div className="legend-box seat-standard" />Standard</div>
           <div className="legend-item"><div className="legend-box seat-premium" />Premium</div>
@@ -134,14 +130,12 @@ const SeatSelection: React.FC = () => {
           <div className="legend-item"><div className="legend-box seat-selected" />Selected</div>
         </div>
 
-        {/* Price types */}
         <div className="price-info fade-up">
           <div className="price-tag">Standard: ₹{show.basePrice}</div>
           <div className="price-tag">Premium: ₹{(show.basePrice * 1.5).toFixed(0)}</div>
           <div className="price-tag">Recliner: ₹{(show.basePrice * 2).toFixed(0)}</div>
         </div>
 
-        {/* Booking summary */}
         {selected.length > 0 && (
           <div className="booking-summary fade-up">
             <div className="summary-seats">

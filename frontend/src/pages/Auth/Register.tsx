@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
+import { CircleAlert, Clapperboard } from 'lucide-react'
 import './Auth.css'
 
 const Register: React.FC = () => {
@@ -18,7 +19,7 @@ const Register: React.FC = () => {
     setLoading(true)
     try {
       await register(form.name, form.email, form.password, form.phone || undefined, form.adminKey || undefined)
-      showToast('Account created! Welcome to CineBook 🎬', 'success')
+      showToast('Account created! Welcome to CineBook', 'success')
       navigate('/')
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.')
@@ -31,7 +32,7 @@ const Register: React.FC = () => {
     <div className="auth-page">
       <div className="auth-card fade-up">
         <div className="auth-logo">
-          <span>🎬</span>
+          <span><Clapperboard size={28} /></span>
           <span className="auth-brand">CINEBOOK</span>
         </div>
         <h1 className="auth-title">Create account</h1>
@@ -64,7 +65,12 @@ const Register: React.FC = () => {
               value={form.adminKey} onChange={e => setForm(p => ({ ...p, adminKey: e.target.value }))} autoComplete="off" />
           </div>
 
-          {error && <div className="error-msg">⚠ {error}</div>}
+          {error && (
+            <div className="error-msg">
+              <CircleAlert size={14} style={{ display: 'inline', marginRight: 6 }} />
+              {error}
+            </div>
+          )}
 
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
             {loading ? 'Creating account...' : 'Create Account'}

@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
+import { Clapperboard } from 'lucide-react'
 import Navbar from './components/Navbar/Navbar'
 import Home from './pages/Home/Home'
 import Login from './pages/Auth/Login'
@@ -28,7 +29,6 @@ const App: React.FC = () => {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/movies" element={<Home />} />
             <Route path="/shows" element={<Shows />} />
             <Route path="/shows/:id" element={<SeatSelection />} />
             <Route path="/login" element={<Login />} />
@@ -46,7 +46,7 @@ const App: React.FC = () => {
 
 const NotFound: React.FC = () => (
   <div style={{ textAlign: 'center', padding: '100px 24px' }}>
-    <p style={{ fontSize: '4rem', marginBottom: 16 }}>🎬</p>
+    <Clapperboard size={64} style={{ margin: '0 auto 16px', display: 'block', color: 'var(--accent)' }} />
     <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>Page Not Found</h1>
     <p style={{ color: 'var(--text-muted)', marginBottom: 28 }}>The page you're looking for doesn't exist.</p>
     <a href="/" className="btn btn-primary">Go Home</a>

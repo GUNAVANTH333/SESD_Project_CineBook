@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { showsApi, moviesApi } from '../../api/services'
+import { MonitorPlay } from 'lucide-react'
 import type { Show, Movie } from '../../types'
 import './Shows.css'
 
@@ -29,7 +30,6 @@ const Shows: React.FC = () => {
     return matchMovie && matchCity
   })
 
-  // Group by movie
   const byMovie = filtered.reduce<Record<string, { movie: Movie; shows: Show[] }>>((acc, show) => {
     const key = show.movieId
     if (!acc[key]) acc[key] = { movie: show.movie, shows: [] }
@@ -45,7 +45,6 @@ const Shows: React.FC = () => {
           <p className="page-sub">Browse upcoming showtimes and book your seats</p>
         </div>
 
-        {/* Filters */}
         <div className="shows-filters fade-up">
           <select
             className="form-input"
@@ -70,7 +69,7 @@ const Shows: React.FC = () => {
           <div className="spinner" />
         ) : Object.keys(byMovie).length === 0 ? (
           <div className="empty-state fade-up">
-            <p>🎭</p>
+            <MonitorPlay size={40} style={{ margin: '0 auto 12px', display: 'block', color: 'var(--text-muted)' }} />
             <p>No shows available {selectedMovie || city ? 'for selected filters' : ''}</p>
             <p className="empty-hint">Admin can add shows from the Admin panel.</p>
           </div>
@@ -83,7 +82,7 @@ const Shows: React.FC = () => {
                     src={movie.posterUrl}
                     alt={movie.title}
                     className="shows-group-poster"
-                    onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48x64/18181f/5e5c66?text=🎬' }}
+                    onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48x64/18181f/5e5c66?text=No+Image' }}
                   />
                   <div>
                     <h2 className="shows-group-title">{movie.title}</h2>

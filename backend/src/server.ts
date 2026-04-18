@@ -3,19 +3,16 @@ import app from "./app.js";
 import prisma from "./config/db.js";
 import { env } from "./config/env.js";
 
-
 const PORT = env.PORT;
 
 const server = app.listen(PORT, () => {
   console.log(`[CineBook] Server running on port ${PORT} in ${env.NODE_ENV} mode`);
 });
 
-// Graceful shutdown
 const shutdown = async (signal: string) => {
-  console.log(`\n[CineBook] Received ${signal}. Shutting down gracefully...`);
+  console.log(`\n[CineBook] Received ${signal}. Shutting down...`);
   server.close(async () => {
     await prisma.$disconnect();
-    console.log("[CineBook] DB disconnected. Bye!");
     process.exit(0);
   });
 };
@@ -29,6 +26,6 @@ process.on("unhandledRejection", (reason) => {
 });
 
 process.on("uncaughtException", (err) => {
-  console.error("[CineBook] Uncaught Exception:", err.message);
+  console.error("[CineBook] Uncaught Exception:", err);
   process.exit(1);
 });

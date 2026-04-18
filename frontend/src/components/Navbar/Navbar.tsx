@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { Clapperboard } from 'lucide-react'
 import './Navbar.css'
 
 const Navbar: React.FC = () => {
@@ -18,12 +19,12 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="container navbar-inner">
         <Link to="/" className="navbar-logo">
-          <span className="logo-icon">🎬</span>
+          <span className="logo-icon"><Clapperboard size={22} /></span>
           <span className="logo-text">CINEBOOK</span>
         </Link>
 
         <div className="navbar-links">
-          <Link to="/movies" className="nav-link">Movies</Link>
+          <Link to="/" className="nav-link">Movies</Link>
           <Link to="/shows" className="nav-link">Shows</Link>
           {isAuthenticated && <Link to="/bookings" className="nav-link">My Bookings</Link>}
           {user?.role === 'ADMIN' && <Link to="/admin" className="nav-link nav-link-admin">Admin</Link>}

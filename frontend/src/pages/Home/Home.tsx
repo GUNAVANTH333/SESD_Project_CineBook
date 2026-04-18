@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { moviesApi, showsApi } from '../../api/services'
+import { Globe, Clock, Star, Clapperboard } from 'lucide-react'
 import type { Movie, Show } from '../../types'
 import './Home.css'
 
@@ -32,7 +33,6 @@ const Home: React.FC = () => {
 
   return (
     <div className="home">
-      {/* Hero */}
       {featuredMovie && (
         <div className="hero fade-up">
           <div className="hero-bg" style={{ backgroundImage: `url(${featuredMovie.posterUrl})` }} />
@@ -41,16 +41,13 @@ const Home: React.FC = () => {
             <span className="badge badge-accent" style={{ marginBottom: 16 }}>{featuredMovie.genre}</span>
             <h1 className="hero-title">{featuredMovie.title}</h1>
             <div className="hero-meta">
-              <span className="hero-meta-item">🌐 {featuredMovie.language}</span>
-              <span className="hero-meta-item">⏱ {featuredMovie.durationMinutes} min</span>
-              <span className="hero-meta-item">⭐ {featuredMovie.rating}</span>
+              <span className="hero-meta-item"><Globe size={13} /> {featuredMovie.language}</span>
+              <span className="hero-meta-item"><Clock size={13} /> {featuredMovie.durationMinutes} min</span>
+              <span className="hero-meta-item"><Star size={13} /> {featuredMovie.rating}</span>
             </div>
             <div className="hero-actions">
               <Link to={`/shows?movieId=${featuredMovie.id}`} className="btn btn-primary btn-lg">
                 Book Tickets
-              </Link>
-              <Link to={`/movies/${featuredMovie.id}`} className="btn btn-ghost btn-lg">
-                View Details
               </Link>
             </div>
           </div>
@@ -58,17 +55,15 @@ const Home: React.FC = () => {
       )}
 
       <div className="container">
-        {/* Now Showing section */}
         <section className="section fade-up">
           <div className="section-header">
             <div>
               <h2 className="section-title">Now Showing</h2>
               <p className="section-sub">Book tickets for the latest releases</p>
             </div>
-            <Link to="/movies" className="see-all">See all →</Link>
+            <Link to="/shows" className="see-all">See all →</Link>
           </div>
 
-          {/* Search + Genre Filter */}
           <div className="filters">
             <input
               className="form-input search-input"
@@ -91,7 +86,7 @@ const Home: React.FC = () => {
             <div className="spinner" />
           ) : filtered.length === 0 ? (
             <div className="empty-state">
-              <p>🎬</p>
+              <Clapperboard size={40} style={{ margin: '0 auto 12px', display: 'block', color: 'var(--text-muted)' }} />
               <p>No movies found</p>
               {movies.length === 0 && <p className="empty-hint">Admin can add movies from the Admin panel.</p>}
             </div>
@@ -104,7 +99,6 @@ const Home: React.FC = () => {
           )}
         </section>
 
-        {/* Upcoming Shows */}
         {shows.length > 0 && (
           <section className="section fade-up">
             <div className="section-header">
@@ -129,7 +123,7 @@ const Home: React.FC = () => {
 const MovieCard: React.FC<{ movie: Movie; shows: Show[] }> = ({ movie, shows }) => {
   const movieShows = shows.filter(s => s.movieId === movie.id)
   return (
-    <Link to={`/movies/${movie.id}`} className="movie-card">
+    <Link to={`/shows?movieId=${movie.id}`} className="movie-card">
       <div className="movie-poster-wrap">
         <img
           src={movie.posterUrl}

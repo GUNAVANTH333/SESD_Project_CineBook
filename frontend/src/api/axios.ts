@@ -1,7 +1,13 @@
 import axios from 'axios'
 
+// In production: VITE_API_URL = https://your-backend.onrender.com
+// In development: Vite proxy forwards /api → http://localhost:5001
+const baseURL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -22,7 +28,7 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refreshToken')
       if (refreshToken) {
         try {
-          const { data } = await axios.post('/api/auth/refresh', { refreshToken })
+          const { data } = await axios.post(`${baseURL}/auth/refresh`, { refreshToken })
           const newToken = data.data.accessToken
           localStorage.setItem('accessToken', newToken)
           original.headers.Authorization = `Bearer ${newToken}`

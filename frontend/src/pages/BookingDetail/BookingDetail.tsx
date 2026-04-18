@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { bookingsApi, paymentsApi } from '../../api/services'
 import { useToast } from '../../context/ToastContext'
+import { CreditCard, ScanQrCode, Landmark, WalletMinimal, PartyPopper, BadgeCheck, CircleX, History } from 'lucide-react'
 import type { Booking } from '../../types'
 import './BookingDetail.css'
 
 const PAYMENT_METHODS = [
-  { value: 'CREDIT_CARD', label: '💳 Credit Card' },
-  { value: 'DEBIT_CARD',  label: '💳 Debit Card' },
-  { value: 'UPI',         label: '📱 UPI' },
-  { value: 'NET_BANKING', label: '🏦 Net Banking' },
-  { value: 'WALLET',      label: '👜 Wallet' },
+  { value: 'CREDIT_CARD', label: 'Credit Card', icon: <CreditCard size={15} /> },
+  { value: 'DEBIT_CARD',  label: 'Debit Card',  icon: <CreditCard size={15} /> },
+  { value: 'UPI',         label: 'UPI',          icon: <ScanQrCode size={15} /> },
+  { value: 'NET_BANKING', label: 'Net Banking',  icon: <Landmark size={15} /> },
+  { value: 'WALLET',      label: 'Wallet',       icon: <WalletMinimal size={15} /> },
 ]
 
 const BookingDetail: React.FC = () => {
@@ -37,7 +38,7 @@ const BookingDetail: React.FC = () => {
       const res = await paymentsApi.pay(id, { paymentMethod: payMethod })
       const status = res.data.data.status
       if (status === 'SUCCESS') {
-        showToast('Payment successful! Enjoy the show 🎬', 'success')
+        showToast('Payment successful! Enjoy the show', 'success')
       } else {
         showToast('Payment failed. Please try again.', 'error')
       }
@@ -76,7 +77,6 @@ const BookingDetail: React.FC = () => {
     <div className="booking-detail-page">
       <div className="container">
         <div className="booking-detail-grid fade-up">
-          {/* Left — Ticket */}
           <div className="ticket-card">
             <div className="ticket-header">
               <div className="ticket-status" style={{ color: statusColor[booking.status] }}>
@@ -132,12 +132,14 @@ const BookingDetail: React.FC = () => {
                 <div className="ticket-amount">₹{booking.totalAmount.toFixed(2)}</div>
               </div>
               {booking.payment?.status === 'SUCCESS' && (
-                <div className="payment-status-badge">✓ PAID</div>
+                <div className="payment-status-badge">
+                  <BadgeCheck size={14} style={{ marginRight: 4 }} />
+                  PAID
+                </div>
               )}
             </div>
           </div>
 
-          {/* Right — Actions */}
           <div className="booking-actions-panel">
             {booking.status === 'CREATED' && (
               <div className="payment-section">
@@ -151,6 +153,7 @@ const BookingDetail: React.FC = () => {
                       className={`payment-method-btn ${payMethod === m.value ? 'selected' : ''}`}
                       onClick={() => setPayMethod(m.value)}
                     >
+                      {m.icon}
                       {m.label}
                     </button>
                   ))}
@@ -169,9 +172,11 @@ const BookingDetail: React.FC = () => {
 
             {booking.status === 'CONFIRMED' && (
               <div className="status-panel status-confirmed">
-                <div className="status-icon">✓</div>
+                <div className="status-icon">
+                  <PartyPopper size={24} />
+                </div>
                 <h3>Booking Confirmed!</h3>
-                <p>Your seats are reserved. Enjoy the movie! 🍿</p>
+                <p>Your seats are reserved. Enjoy the movie!</p>
                 {booking.payment && (
                   <div className="payment-receipt">
                     <div className="receipt-row">
@@ -197,7 +202,9 @@ const BookingDetail: React.FC = () => {
 
             {booking.status === 'CANCELLED' && (
               <div className="status-panel status-cancelled">
-                <div className="status-icon cancelled">✕</div>
+                <div className="status-icon cancelled">
+                  <CircleX size={24} />
+                </div>
                 <h3>Booking Cancelled</h3>
                 <p>This booking has been cancelled and seats have been released.</p>
                 <button className="btn btn-primary" style={{ marginTop: 16, width: '100%' }}
@@ -209,7 +216,9 @@ const BookingDetail: React.FC = () => {
 
             {booking.status === 'PENDING_PAYMENT' && (
               <div className="status-panel">
-                <div className="status-icon" style={{ background: 'rgba(240,160,64,0.15)', color: '#f0a040' }}>⏳</div>
+                <div className="status-icon" style={{ background: 'rgba(240,160,64,0.15)', color: '#f0a040' }}>
+                  <History size={24} />
+                </div>
                 <h3>Processing Payment</h3>
                 <p>Your payment is being processed. Please wait.</p>
                 <button className="btn btn-ghost" style={{ marginTop: 16, width: '100%' }}

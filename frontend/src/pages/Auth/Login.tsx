@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
+import { CircleAlert, Clapperboard } from 'lucide-react'
 import './Auth.css'
 
 const Login: React.FC = () => {
@@ -31,7 +32,7 @@ const Login: React.FC = () => {
     <div className="auth-page">
       <div className="auth-card fade-up">
         <div className="auth-logo">
-          <span>🎬</span>
+          <span><Clapperboard size={28} /></span>
           <span className="auth-brand">CINEBOOK</span>
         </div>
         <h1 className="auth-title">Welcome back</h1>
@@ -63,7 +64,12 @@ const Login: React.FC = () => {
             />
           </div>
 
-          {error && <div className="error-msg">⚠ {error}</div>}
+          {error && (
+            <div className="error-msg">
+              <CircleAlert size={14} style={{ display: 'inline', marginRight: 6 }} />
+              {error}
+            </div>
+          )}
 
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}

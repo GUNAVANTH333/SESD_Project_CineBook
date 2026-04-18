@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react'
+import { Check, X } from 'lucide-react'
 
 interface Toast { id: string; message: string; type: 'success' | 'error' }
 interface ToastContextType { showToast: (message: string, type?: 'success' | 'error') => void }
@@ -20,7 +21,9 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       <div className="toast-container">
         {toasts.map(t => (
           <div key={t.id} className={`toast toast-${t.type}`}>
-            <span>{t.type === 'success' ? '✓' : '✕'}</span>
+            <span className="toast-icon">
+              {t.type === 'success' ? <Check size={14} /> : <X size={14} />}
+            </span>
             {t.message}
           </div>
         ))}

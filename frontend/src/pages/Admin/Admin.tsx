@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { moviesApi, multiplexesApi, showsApi, repairApi } from '../../api/services'
+import { moviesApi, multiplexesApi, showsApi } from '../../api/services'
 import { useToast } from '../../context/ToastContext'
+import { TriangleAlert } from 'lucide-react'
 import type { Movie, Multiplex } from '../../types'
 import './Admin.css'
 
@@ -43,7 +44,6 @@ const Admin: React.FC = () => {
   )
 }
 
-/* ---- Movies Panel ---- */
 const MoviesPanel: React.FC<{ movies: Movie[]; onRefresh: () => void; showToast: any }> = ({ movies, onRefresh, showToast }) => {
   const empty = { title: '', genre: '', durationMinutes: 120, language: 'English', rating: 'U', posterUrl: '', releaseDate: '' }
   const [form, setForm] = useState(empty)
@@ -127,7 +127,6 @@ const MoviesPanel: React.FC<{ movies: Movie[]; onRefresh: () => void; showToast:
   )
 }
 
-/* ---- Multiplexes Panel ---- */
 const MultiplexesPanel: React.FC<{ multiplexes: Multiplex[]; onRefresh: () => void; showToast: any }> = ({ multiplexes, onRefresh, showToast }) => {
   const empty = { name: '', location: '', city: '', totalScreens: 1 }
   const [form, setForm] = useState(empty)
@@ -248,11 +247,9 @@ const MultiplexesPanel: React.FC<{ multiplexes: Multiplex[]; onRefresh: () => vo
   )
 }
 
-/* ---- Shows Panel ---- */
 const ShowsPanel: React.FC<{ movies: Movie[]; multiplexes: Multiplex[]; showToast: any }> = ({ movies, multiplexes, showToast }) => {
   const [form, setForm] = useState({ movieId: '', screenId: '', showTime: '', basePrice: 200 })
   const [saving, setSaving] = useState(false)
-  const [repairing, setRepairing] = useState(false)
 
   const screens = multiplexes.flatMap(m => m.screens.map(s => ({ ...s, multiplexName: m.name })))
 
@@ -268,34 +265,10 @@ const ShowsPanel: React.FC<{ movies: Movie[]; multiplexes: Multiplex[]; showToas
     } finally { setSaving(false) }
   }
 
-  const handleRepair = async () => {
-    setRepairing(true)
-    try {
-      const res = await repairApi.repairSeatMaps()
-      const { screensFixed, showsFixed } = res.data.data
-      showToast(`✅ Fixed ${screensFixed} screen(s) and ${showsFixed} show(s)`, 'success')
-    } catch (err: any) {
-      showToast(err.response?.data?.message || 'Repair failed', 'error')
-    } finally { setRepairing(false) }
-  }
-
   return (
     <div className="admin-panel" style={{ gridTemplateColumns: '1fr' }}>
       <div className="admin-panel-left" style={{ maxWidth: 480 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-          <h3 className="panel-section-title" style={{ marginBottom: 0 }}>Schedule New Show</h3>
-          <button
-            className="btn btn-ghost"
-            style={{ fontSize: '0.8rem', padding: '6px 12px', color: 'var(--accent)', borderColor: 'var(--accent)' }}
-            onClick={handleRepair}
-            disabled={repairing}
-          >
-            {repairing ? '⏳ Repairing...' : '🔧 Repair Seat Maps'}
-          </button>
-        </div>
-        <p className="form-hint" style={{ marginBottom: 16, color: 'var(--accent)' }}>
-          ⚠ If shows show &quot;No seats available&quot;, click &quot;Repair Seat Maps&quot; once to fix all existing shows.
-        </p>
+        <h3 className="panel-section-title">Schedule New Show</h3>
         <form className="admin-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Movie</label>
@@ -327,7 +300,10 @@ const ShowsPanel: React.FC<{ movies: Movie[]; multiplexes: Multiplex[]; showToas
             {saving ? 'Creating...' : 'Create Show'}
           </button>
           {(movies.length === 0 || screens.length === 0) && (
-            <p className="error-msg" style={{ marginTop: 10 }}>⚠ Add movies and multiplex screens first.</p>
+            <p className="error-msg" style={{ marginTop: 10 }}>
+              <TriangleAlert size={13} style={{ display: 'inline', marginRight: 6 }} />
+              Add movies and multiplex screens first.
+            </p>
           )}
         </form>
       </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { bookingsApi } from '../../api/services'
 import { useToast } from '../../context/ToastContext'
+import { Ticket, CalendarDays, Clock, Armchair } from 'lucide-react'
 import type { Booking } from '../../types'
 import './MyBookings.css'
 
@@ -37,7 +38,6 @@ const MyBookings: React.FC = () => {
           </div>
         </div>
 
-        {/* Filter tabs */}
         <div className="status-tabs fade-up">
           {['ALL', 'CREATED', 'CONFIRMED', 'CANCELLED'].map(s => (
             <button
@@ -57,9 +57,9 @@ const MyBookings: React.FC = () => {
           <div className="spinner" />
         ) : filtered.length === 0 ? (
           <div className="empty-state fade-up">
-            <p>🎟</p>
+            <Ticket size={40} style={{ margin: '0 auto 12px', display: 'block', color: 'var(--text-muted)' }} />
             <p>{filter === 'ALL' ? "You haven't booked anything yet" : `No ${filter.toLowerCase()} bookings`}</p>
-            {filter === 'ALL' && <Link to="/movies" className="btn btn-primary" style={{ marginTop: 16 }}>Browse Movies</Link>}
+            {filter === 'ALL' && <Link to="/shows" className="btn btn-primary" style={{ marginTop: 16 }}>Browse Shows</Link>}
           </div>
         ) : (
           <div className="bookings-list fade-up">
@@ -80,16 +80,16 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
         <img
           src={booking.show.movie.posterUrl}
           alt={booking.show.movie.title}
-          onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80x110/18181f/5e5c66?text=🎬' }}
+          onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80x110/18181f/5e5c66?text=No+Image' }}
         />
       </div>
       <div className="booking-card-info">
         <h3 className="booking-movie">{booking.show.movie.title}</h3>
         <p className="booking-venue">{booking.show.screen?.multiplex?.name || '—'}</p>
         <div className="booking-meta">
-          <span>📅 {showDate.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-          <span>🕐 {showDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
-          <span>🪑 {booking.seatCount} seat{booking.seatCount > 1 ? 's' : ''}</span>
+          <span><CalendarDays size={12} /> {showDate.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+          <span><Clock size={12} /> {showDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+          <span><Armchair size={12} /> {booking.seatCount} seat{booking.seatCount > 1 ? 's' : ''}</span>
         </div>
       </div>
       <div className="booking-card-right">

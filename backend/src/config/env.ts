@@ -25,4 +25,7 @@ export const env = {
 
   // Registering with this key grants ADMIN role
   ADMIN_REGISTRATION_KEY: getEnvVar("ADMIN_REGISTRATION_KEY", "cinebook-admin-2024"),
+
+  // Allowed CORS origin in production
+  FRONTEND_URL: getEnvVar("FRONTEND_URL", "http://localhost:5173"),
 };

@@ -10,7 +10,6 @@ export interface JwtPayload {
   exp?: number;
 }
 
-// Extend Express Request to carry the decoded user
 declare global {
   namespace Express {
     interface Request {
@@ -19,10 +18,6 @@ declare global {
   }
 }
 
-/**
- * Verifies the Bearer JWT in the Authorization header.
- * Attaches decoded payload to req.user on success.
- */
 export const authenticate = (req: Request, _res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
@@ -41,10 +36,6 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction): 
   }
 };
 
-/**
- * Role-based access control middleware factory.
- * Must be used after `authenticate`.
- */
 export const authorize =
   (...roles: Array<"ADMIN" | "CUSTOMER">) =>
   (req: Request, _res: Response, next: NextFunction): void => {
