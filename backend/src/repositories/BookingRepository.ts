@@ -3,6 +3,7 @@ import {
   Booking,
   BookingStatus,
   ShowSeatStatus,
+  Prisma,
 } from "../generated/prisma/client.js";
 import { env } from "../config/env.js";
 
@@ -41,7 +42,7 @@ export class BookingRepository {
       Date.now() + env.SEAT_LOCK_TTL_MINUTES * 60 * 1000
     );
 
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Lock all requested show seats atomically (optimistic locking via version check)
       for (const ssid of showSeatIds) {
         const showSeat = await tx.showSeat.findUnique({ where: { id: ssid } });
@@ -101,7 +102,7 @@ export class BookingRepository {
     changedBy: string,
     previousStatus: BookingStatus
   ): Promise<Booking> {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const booking = await tx.booking.update({
         where: { id },
         data: { status: newStatus, version: { increment: 1 } },
